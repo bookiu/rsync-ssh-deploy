@@ -29,48 +29,36 @@ The keys should be generated using the PEM format. You can use this command
 ssh-keygen -m PEM -t rsa -b 4096
 ```
 
-##### 2. `REMOTE_HOST` [required]
+##### 2. `TARGETS` [required]
 
-eg: mydomain.com
+eg: `username@mydomain.com:2222:/path/to/target` or `username@mydomain.com:/path/to/target` or `username@mydomain.com:2222:/path/to/target;username@mydomain.com:/path/to/target`
 
-##### 3. `REMOTE_USER` [required]
-
-eg: myusername
-
-##### 4. `REMOTE_PORT` (optional, default '22')
-
-eg: '59184'
-
-##### 5. `ARGS` (optional, default '-rlgoDzvc -i')
+##### 3. `ARGS` (optional, default '-rlgoDzvc -i')
 
 For any initial/required rsync flags, eg: `-avzr --delete`
 
-##### 6. `SOURCE` (optional, default '')
+##### 4. `SOURCE` (optional, default '')
 
 The source directory, path relative to `$GITHUB_WORKSPACE` root, eg: `dist/`.
 Multiple sources should be separated by space.
 
-##### 7. `TARGET` (optional, default '/home/REMOTE_USER/')
-
-The target directory
-
-##### 8. `EXCLUDE` (optional, default '')
+##### 5. `EXCLUDE` (optional, default '')
 
 path to exclude separated by `,`, ie: `/dist/, /node_modules/`
 
-##### 9. `SCRIPT_BEFORE` (optional, default '')
+##### 6. `SCRIPT_BEFORE` (optional, default '')
 
 Script to run on host machine before rsync. Single line or multiline commands.
 Execution is preformed by storing commands in `.sh` file and executing it via `.bash` over `ssh`
 If you have issues with `ssh` connection, use this var, eg `SCRIPT_BEFORE: ls`.
 This will force `known_hosts` update, adding your host via `ssh-keyscan`.
 
-##### 10. `SCRIPT_AFTER` (optional, default '')
+##### 7. `SCRIPT_AFTER` (optional, default '')
 
 Script to run on host machine after rsync.
 Rsync output is stored in `$RSYNC_STDOUT` env variable.
 
-##### 11. `SSH_CMD_ARGS` (optional, default '-o StrictHostKeyChecking=no')
+##### 8. `SSH_CMD_ARGS` (optional, default '-o StrictHostKeyChecking=no')
 
 A list of ssh arguments, they must be prefixed with -o and separated by a comma, for example: -o SomeArgument=no, -o SomeOtherArgument=5
 
@@ -87,9 +75,7 @@ or use the latest version from a branch, eg: ssh-deploy@main
       SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
       ARGS: "-rlgoDzvc -i"
       SOURCE: "dist/"
-      REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
-      REMOTE_USER: ${{ secrets.REMOTE_USER }}
-      TARGET: ${{ secrets.REMOTE_TARGET }}
+      TARGETS: ${{ secrets.TARGETS }}
       EXCLUDE: "/dist/, /node_modules/"
       SCRIPT_BEFORE: |
         whoami
@@ -128,9 +114,7 @@ jobs:
           SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
           ARGS: "-rlgoDzvc -i --delete"
           SOURCE: "dist/"
-          REMOTE_HOST: ${{ secrets.REMOTE_HOST }}
-          REMOTE_USER: ${{ secrets.REMOTE_USER }}
-          TARGET: ${{ secrets.REMOTE_TARGET }}
+          TARGETS: ${{ secrets.REMOTE_TARGETS }}
           EXCLUDE: "/dist/, /node_modules/"
 ```
 

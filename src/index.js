@@ -7,14 +7,14 @@ const inputs = require('./inputs');
 
 const run = async () => {
   const {
-    source, remoteUser, remoteHost, remotePort,
+    source, targets,
     deployKeyName, sshPrivateKey,
     args, exclude, sshCmdArgs,
     scriptBefore, scriptAfter,
     rsyncServer
   } = inputs;
   // Validate required inputs
-  validateRequiredInputs({ sshPrivateKey, remoteHost, remoteUser });
+  validateRequiredInputs({ sshPrivateKey });
   // Add SSH key
   addSshKey(sshPrivateKey, deployKeyName);
   const { path: privateKeyPath } = getPrivateKeyPath(deployKeyName);
