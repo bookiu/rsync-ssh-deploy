@@ -1,0 +1,32 @@
+version: "3.3"
+
+services:
+  server01:
+    build:
+      context: .
+      dockerfile: server.dockerfile
+    networks:
+      - action
+
+  server02:
+    build:
+      context: .
+      dockerfile: server.dockerfile
+    networks:
+      - action
+
+  client:
+    build:
+      context: .
+      dockerfile: client.dockerfile
+      no_cache: true
+    networks:
+      - action
+    depends_on:
+      - server01
+      - server02
+
+networks:
+  action:
+    name: action
+    driver: bridge

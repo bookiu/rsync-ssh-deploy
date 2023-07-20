@@ -6,15 +6,13 @@ const inputNames = [
   'SCRIPT_BEFORE', 'SCRIPT_AFTER'];
 
 const githubWorkspace = process.env.GITHUB_WORKSPACE;
-const remoteUser = process.env.REMOTE_USER || process.env.INPUT_REMOTE_USER;
 
 const defaultInputs = {
   source: '',
-  target: `/home/${remoteUser}/`,
   exclude: '',
   args: '-rlgoDzvc -i',
   sshCmdArgs: '-o StrictHostKeyChecking=no',
-  deployKeyName: `deploy_key_${remoteUser}_${Date.now()}`
+  deployKeyName: `deploy_key_${Date.now()}`
 };
 
 const inputs = {
@@ -45,8 +43,5 @@ inputNames.forEach((input) => {
 
   inputs[inputName] = extendedVal;
 });
-
-// inputs.sshServer = `${inputs.remoteUser}@${inputs.remoteHost}`;
-// inputs.rsyncServer = `${inputs.remoteUser}@${inputs.remoteHost}:${inputs.target}`;
 
 module.exports = inputs;

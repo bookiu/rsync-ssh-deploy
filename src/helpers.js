@@ -72,7 +72,7 @@ const splitTargets = (targets) => {
     const r = targetUrlRe.exec(item);
     if (r == null) {
       console.error(`❌ [INPUTS] target ${item} is invalid`);
-      continue;
+      return null;
     }
     let username = r[1];
     let host = r[2];
@@ -87,7 +87,7 @@ const splitTargets = (targets) => {
       "port": port,
       "target": target
     }
-  })
+  }).filter(item => item !== null);
 
   return filteredTargets;
 }

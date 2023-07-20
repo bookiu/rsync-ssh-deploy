@@ -10,8 +10,7 @@ const run = async () => {
     source, targets,
     deployKeyName, sshPrivateKey,
     args, exclude, sshCmdArgs,
-    scriptBefore, scriptAfter,
-    rsyncServer
+    scriptBefore, scriptAfter
   } = inputs;
   // Validate required inputs
   validateRequiredInputs({ sshPrivateKey });
@@ -20,17 +19,26 @@ const run = async () => {
   const { path: privateKeyPath } = getPrivateKeyPath(deployKeyName);
   // Update known hosts if ssh command is present to avoid prompt
   if (scriptBefore || scriptAfter) {
-    updateKnownHosts(remoteHost, remotePort);
+    targets.forEach(({ host: remoteHost, port: remotePort }) => {
+      updateKnownHosts(remoteHost, remotePort);
+    });
   }
   // Check Script before
   if (scriptBefore) {
     await remoteCmdBefore(scriptBefore, privateKeyPath);
   }
   /* eslint-disable object-property-newline */
-  await sshDeploy({
-    source, rsyncServer, exclude, remotePort,
-    privateKeyPath, args, sshCmdArgs
+  const tasks = targets.map((item) => {
+    const { user, host, target, port: remotePort } = item;
+    const rsyncServer = `${user}@${host}:${target}`;
+
+    console.log(`[SSH] Start deploying ${source} to ${rsyncServer}`);
+    return sshDeploy({
+      source, rsyncServer, exclude, remotePort, privateKeyPath, args, sshCmdArgs
+    });
   });
+  await Promise.all(tasks);
+
   // Check script after
   if (scriptAfter) {
     await remoteCmdAfter(scriptAfter, privateKeyPath);
